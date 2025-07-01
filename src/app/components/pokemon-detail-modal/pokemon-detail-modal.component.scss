@@ -1,0 +1,55 @@
+.modal-overlay {
+  position: fixed; /* Fija el modal respecto a la ventana del navegador */
+  top: 0; /* Lo posiciona en la parte superior */
+  left: 0; /* Lo posiciona en la parte izquierda */
+  width: 100%; /* Ocupa todo el ancho de la ventana */
+  height: 100%; /* Ocupa todo el alto de la ventana */
+  background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente negro */
+  display: flex; /* Usa flexbox para centrar el contenido */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+  backdrop-filter: blur(5px); /* Opcional: añade un efecto de desenfoque al fondo */
+}
+
+.modal-content {
+  background-color: white; /* Fondo blanco para el contenido del modal */
+  padding: 25px; /* Espacio interno */
+  border-radius: 12px; /* Bordes redondeados */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* Sombra para darle profundidad */
+  width: 90%; /* Ancho del modal */
+  max-width: 600px; /* Ancho máximo para pantallas grandes */
+  max-height: 90vh; /* Altura máxima (90% de la altura de la ventana) */
+  overflow-y: auto; /* Permite scroll si el contenido es demasiado largo */
+  position: relative; /* Para posicionar el botón de cerrar */
+  transform: scale(0.95); /* Opcional: pequeña escala para efecto de apertura */
+  animation: modal-enter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; /* Animación de entrada */
+}
+
+.close-button {
+  position: absolute; /* Posiciona el botón respecto al modal-content */
+  top: 15px; /* Margen superior */
+  right: 15px; /* Margen derecho */
+  background: none; /* Sin fondo */
+  border: none; /* Sin borde */
+  font-size: 1.8em; /* Tamaño del icono/texto */
+  color: #555; /* Color del botón */
+  cursor: pointer; /* Cursor de puntero */
+  transition: color 0.2s ease-in-out; /* Transición suave para el color */
+
+  &:hover {
+    color: #000; /* Color al pasar el ratón */
+  }
+}
+
+/* Opcional: Animación para la entrada del modal */
+@keyframes modal-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

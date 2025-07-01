@@ -1,14 +1,15 @@
-import { TitleCasePipe } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
+import { PokemonDisplay } from '../../interfaces/pokemon-display.interface';
 @Component({
   selector: 'app-pokemon-abilities',
   standalone: true,
-  imports: [TitleCasePipe],
+  imports: [TitleCasePipe, CommonModule],
   templateUrl: './pokemon-abilities.component.html',
-  styleUrl: './pokemon-abilities.component.scss',
+  styleUrls: ['./pokemon-abilities.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class PokemonAbilitiesComponent {
-  @Input() abilities: { base_stat: number; stat: { name: string } }[] = [];
+  @Input() pokemon!: PokemonDisplay;
 }

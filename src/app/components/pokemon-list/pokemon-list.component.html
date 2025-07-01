@@ -3,35 +3,90 @@
     <input type="text" [(ngModel)]="searchQuery" placeholder="Search by pokemon name..."
       (keyup.enter)="searchPokemon()" />
     <button (click)="searchPokemon()">Search</button>
+    <button (click)="loadPokemon()" *ngIf="searchQuery.length > 0 || isShowingFavorites()">View All</button>
+    <button (click)="showFavorites()" *ngIf="!isShowingFavorites()">View Favorites</button>
   </div>
 
-  <div *ngIf="isLoading()" class="loading-spinner">
+  <div *ngIf="isLoading() && !isLoadingMore()" class="loading-spinner">
     Loading Pokemon...
   </div>
 
-  <div *ngIf="!isLoading() && pokemonList().length === 0" class="no-results">
-    No Pokemon found.
+  <div *ngIf="!isLoading() && displayedPokemonList().length === 0 && !isShowingFavorites() && !searchQuery.trim()"
+    class="no-results">
+    No Pokemon found in the list.
   </div>
 
-  <div class="pokemon-grid">
-    <div *ngFor="let pokemon of pokemonList()" class="pokemon-card" [routerLink]="getRouterLink(pokemon.name)">
+  <div *ngIf="!isLoading() && displayedPokemonList().length === 0 && searchQuery.trim()" class="no-results">
+    No results for "{{ searchQuery }}".
+  </div>
+
+  <div *ngIf="!isLoading() && displayedPokemonList().length === 0 && isShowingFavorites()"
+    class="no-results no-favorites">
+    You don't have any favorite Pokemon yet.
+  </div>
+
+
+  <div class="pokemon-grid" #pokemonGridContainer>
+    <div *ngFor="let pokemon of displayedPokemonList()" class="pokemon-card"
+      (click)="openPokemonModal(pokemon); $event.stopPropagation();" [style.--card-color]="getCardBackgroundColor(pokemon)">
       <img [src]="pokemon.imageUrl || 'assets/placeholder.png'" [alt]="pokemon.name" class="pokemon-image"
         loading="lazy" onerror="this.onerror=null;this.src='assets/placeholder.png';" />
-      <div class="pokemon-name">{{ pokemon.name | titlecase }}</div>
+      <div class="pokemon-details">
+        <div class="pokemon-name">{{ pokemon.name | titlecase }}</div>
+        <div class="pokemon-types">
+          <span *ngFor="let typeSlot of pokemon.types" class="pokemon-type-tag">
+            {{ typeSlot.type.name | titlecase }}
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 
-</div>
-<div class="load-more-container">
-  <button (click)="loadMorePokemon()">Load More</button>
-  <div class="favorites-section" *ngIf="getFavs().length > 0">
-    <h2>My Favorite Pokemons</h2>
-    <ul class="favorites-list">
-      <li *ngFor="let pokemonId of getFavs()">
-        <a [routerLink]="getRouterLink(getPokemonNameFromId(pokemonId) || '')">
-          {{ getPokemonNameFromId(pokemonId) | titlecase }}
-        </a>
+  <div class="load-more-container">
+    <div *ngIf="isLoadingMore()" class="loading-more-message">
+      Loading more Pokemons...
+    </div>
+
+    <button (click)="loadMorePokemon()"
+      *ngIf="!isLoading() && !isShowingFavorites() && !searchQuery.trim() && displayedPokemonList().length < totalPokemonCount() && !isLoadingMore()"
+      [disabled]="isLoadingMore()">
+      Load More Pokemon
+    </button>
+  </div>
+
+  <div class="pagination-section">
+    <div class="pagination-controls"
+      *ngIf="!isLoading() && !isShowingFavorites() && !searchQuery.trim() && getPaginationPages().length > 1">
+      <button (click)="goToPage(1)" [disabled]="currentViewPage() === 1">First</button>
+      <button (click)="goToPage(currentViewPage() - 1)" [disabled]="currentViewPage() === 1">Previous</button>
+
+      <ng-container *ngFor="let page of getPaginationPages()">
+        <button *ngIf="page >= currentViewPage() - 2 && page <= currentViewPage() + 2" (click)="goToPage(page)"
+          [class.active]="currentViewPage() === page">
+          {{ page }}
+        </button>
+      </ng-container>
+
+      <button (click)="goToPage(currentViewPage() + 1)"
+        [disabled]="currentViewPage() === getPaginationPages().length">Next</button>
+      <button (click)="goToPage(getPaginationPages().length)"
+        [disabled]="currentViewPage() === getPaginationPages().length">Last</button>
+    </div>
+  </div>
+
+  <div class="favorites-section">
+    <h2>Your Favorite Pokemons</h2>
+    <ul class="favorites-list" *ngIf="getFavs().length > 0">
+      <li *ngFor="let favId of getFavs()">
+        <a [routerLink]="getRouterLink(getPokemonNameFromId(favId) || '')">{{ getPokemonNameFromId(favId) | titlecase
+          }}</a>
       </li>
     </ul>
+    <div *ngIf="getFavs().length === 0 && !isLoading()" class="no-results no-favorites">
+      You haven't added any favorites yet.
     </div>
+  </div>
 </div>
+
+<app-pokemon-detail-modal *ngIf="isModalOpen()" [pokemon]="selectedPokemonForModal()"
+  (closeModal)="closePokemonModal()"></app-pokemon-detail-modal>

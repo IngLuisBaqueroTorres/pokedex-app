@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PokeService } from '../../services/poke.service';
 import { PokemonAbilitiesComponent } from '../pokemon-abilities/pokemon-abilities.component';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 
+import { PokemonDisplay } from '../../interfaces/pokemon-display.interface';
 @Component({
   selector: 'app-pokemon-detail',
   templateUrl: './pokemon-detail.component.html',
@@ -12,8 +13,7 @@ import { CommonModule, TitleCasePipe } from '@angular/common';
   imports: [CommonModule, PokemonAbilitiesComponent, TitleCasePipe],
 })
 export class PokemonDetailComponent implements OnInit {
-  pokemon: any;
-
+  @Input() pokemon!: PokemonDisplay;
   constructor(
     private route: ActivatedRoute,
     private pokeService: PokeService

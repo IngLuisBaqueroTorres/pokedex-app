@@ -1,0 +1,24 @@
+.main-pokemon-image{
+  width: 50%;
+  display: block;
+  margin: auto;
+}
+
+.container{
+  margin: 20px;
+}
+
+.container h1{
+  text-align: center;
+}
+p {
+  margin: 8px 0;
+  font-size: 1em;
+  color: #444;
+}
+strong {
+  color: #555;
+  min-width: 60px;
+  display: inline-block;
+}
+

@@ -1,15 +1,18 @@
-import { CommonModule } from '@angular/common';
-import { provideHttpClient } from '@angular/common/http';
+// src/app/app.component.ts
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+// import { RouterOutlet } from '@angular/router'; // Comenta o elimina
+import { PokemonListComponent } from './components/pokemon-list/pokemon-list.component'; // ¡Importa tu PokemonListComponent!
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  imports: [
+    CommonModule,
+    // RouterOutlet, // Comenta o elimina
+    PokemonListComponent, // ¡Añade tu PokemonListComponent aquí!
+  ],
+  template: ` <app-pokemon-list></app-pokemon-list> `,
+  styles: [],
 })
-export class AppComponent {
-  title = 'pokedex-app';
-}
+export class AppComponent {}

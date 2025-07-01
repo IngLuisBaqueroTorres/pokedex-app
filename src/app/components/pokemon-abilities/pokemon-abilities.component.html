@@ -1,5 +1,8 @@
-<p>
-  Stats: @for(ability of abilities; track ability.stat) {
-  <div> {{ ability.stat.name }} : {{ ability.base_stat }} </div>
-  }
-</p>
+<h3>Habilidades</h3>
+<ul *ngIf="pokemon.abilities && pokemon.abilities.length > 0">
+  <li *ngFor="let ability of pokemon.abilities">
+    {{ ability.ability.name | titlecase }}
+    <span *ngIf="ability.is_hidden">(Oculta)</span>
+  </li>
+</ul>
+<p *ngIf="!pokemon.abilities || pokemon.abilities.length === 0">No hay habilidades disponibles.</p>

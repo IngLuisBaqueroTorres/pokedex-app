@@ -1,0 +1,29 @@
+
+h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+li {
+  background-color: #e0e0e0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  color: #555;
+}
+li span {
+  font-size: 0.8em;
+  color: #777;
+}
+p {
+  color: #777;
+  font-style: italic;
+  text-align: center;
+}

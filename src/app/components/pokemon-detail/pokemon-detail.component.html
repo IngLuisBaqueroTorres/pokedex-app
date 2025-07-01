@@ -1,8 +1,8 @@
-<div *ngIf="pokemon">
+<div *ngIf="pokemon" class="container">
   <h1>{{ pokemon.name | titlecase }}</h1>
-  <img [src]="pokemon.sprites.front_default" alt="{{ pokemon.name }}" />
+  <img [src]="pokemon.imageUrl || 'assets/placeholder.png'" alt="{{ pokemon.name }}" class="main-pokemon-image" />
   <p>Height: {{ pokemon.height }}</p>
   <p>Weight: {{ pokemon.weight }}</p>
-  <app-pokemon-abilities [abilities]="pokemon.stats"></app-pokemon-abilities>
+  <app-pokemon-abilities [pokemon]="pokemon"></app-pokemon-abilities>
   <button (click)="addFavorite()">Add to Favorites</button>
 </div>
