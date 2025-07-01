@@ -8,6 +8,6 @@ This repo is intended for testing purposes. You are provided with the files that
 Copying the repository
 
 Due to the public nature of forks we suggest you duplicate the repo rather then forking it.
-You will need to create your own repo e.g. `[your_github_username]/pokedex-app` and then clone this repo `luidcrua/pokedex-app` and push the code into your new one. You can follow the steps for doing this here: https://help.github.com/articles/duplicating-a-repository/
+You will need to create your own repo e.g. `[your_github_username]/pokedex-app` and then clone this repo `IngLuisBaqueroTorres/pokedex-app` and push the code into your new one. You can follow the steps for doing this here: https://help.github.com/articles/duplicating-a-repository/
 
 

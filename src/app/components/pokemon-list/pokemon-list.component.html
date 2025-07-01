@@ -1,23 +1,37 @@
-<div>
-  <input [(ngModel)]="searchQuery" placeholder="Search Pokémon" />
-  <button (click)="searchPokemon()">Search</button>
+<div class="pokemon-list-container">
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Search by pokemon name..."
+      (keyup.enter)="searchPokemon()" />
+    <button (click)="searchPokemon()">Search</button>
+  </div>
+
+  <div *ngIf="isLoading()" class="loading-spinner">
+    Loading Pokemon...
+  </div>
+
+  <div *ngIf="!isLoading() && pokemonList().length === 0" class="no-results">
+    No Pokemon found.
+  </div>
+
+  <div class="pokemon-grid">
+    <div *ngFor="let pokemon of pokemonList()" class="pokemon-card" [routerLink]="getRouterLink(pokemon.name)">
+      <img [src]="pokemon.imageUrl || 'assets/placeholder.png'" [alt]="pokemon.name" class="pokemon-image"
+        loading="lazy" onerror="this.onerror=null;this.src='assets/placeholder.png';" />
+      <div class="pokemon-name">{{ pokemon.name | titlecase }}</div>
+    </div>
+  </div>
+
 </div>
-<ul>
-  <li *ngFor="let pokemon of pokemonList()">
-    <a [routerLink]="getRouterLink(pokemon.name)">{{
-      pokemon.name | titlecase
-    }}</a>
-  </li>
-</ul>
-<!-- TODO implement pagination -->
-<button>Load More</button>
-<div>
-  Favorites:
-  <ul>
-    <li *ngFor="let pokemon of getFavs()">
-      <a [routerLink]="getRouterLink(pokemon.name)">{{
-        pokemon.name | titlecase
-      }}</a>
-    </li>
-  </ul>
+<div class="load-more-container">
+  <button (click)="loadMorePokemon()">Load More</button>
+  <div class="favorites-section" *ngIf="getFavs().length > 0">
+    <h2>My Favorite Pokemons</h2>
+    <ul class="favorites-list">
+      <li *ngFor="let pokemonId of getFavs()">
+        <a [routerLink]="getRouterLink(getPokemonNameFromId(pokemonId) || '')">
+          {{ getPokemonNameFromId(pokemonId) | titlecase }}
+        </a>
+      </li>
+    </ul>
+    </div>
 </div>
