@@ -59,9 +59,6 @@ h1 {
 }
 
 .detail-line-separator {
-  /* Este separador probablemente no se usará en un diseño de dos columnas
-     si está entre el header y el body. Si se quiere un separador vertical,
-     se haría de otra forma o se eliminaría. */
   display: none;
 }
 
@@ -113,7 +110,7 @@ h1 {
 
 
 .favorite-bottom-button.is-favorite {
-  background-color: #f44336;
+  background-color: #c96760;
 }
 
 .favorite-bottom-button.is-favorite:hover {
@@ -158,6 +155,12 @@ h1 {
   }
   h1 {
     font-size: 1.8em;
+    margin-top: 10px;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   }
   .action-button {
     font-size: 0.9em;

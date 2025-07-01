@@ -102,14 +102,14 @@ export class PokemonListComponent implements OnInit {
   private getPokemonDetailsWithImage(pokemon: any): Observable<PokemonDisplay> {
     return this.pokeService.getPokemonDetails(pokemon.name).pipe(
       map((details) => {
-
-
+        const imageUrl =
+          details.sprites.other['official-artwork']?.front_default ||
+          details.sprites.front_default ||
+          'https://placehold.co/150x150/cccccc/ffffff?text=No+Image';
         return {
           name: details.name,
           url: details.url,
-          imageUrl:
-            details.sprites.other['official-artwork']?.front_default ||
-            details.sprites.front_default,
+          imageUrl: imageUrl,
           id: details.id,
           types: details.types,
           abilities: details.abilities,
@@ -120,13 +120,12 @@ export class PokemonListComponent implements OnInit {
       catchError((err) => {
         console.warn(`Failed to load details for ${pokemon.name}:`, err);
         const extractedId = this.extractIdFromUrl(pokemon.url);
-
         const idToUse = extractedId !== undefined ? extractedId : 0;
 
         return of({
           name: pokemon.name,
           url: pokemon.url,
-          imageUrl: null,
+          imageUrl: 'https://placehold.co/150x150/cccccc/ffffff?text=No+Image',
           id: idToUse,
           types: [],
           abilities: [],
@@ -289,18 +288,21 @@ export class PokemonListComponent implements OnInit {
         .getPokemonDetails(this.searchQuery.toLowerCase())
         .pipe(
           map(
-            (pokemon) =>
+            (
+              details
+            ) =>
               ({
-                name: pokemon.name,
-                url: pokemon.url,
+                name: details.name,
+                url: details.url,
                 imageUrl:
-                  pokemon.sprites.other['official-artwork']?.front_default ||
-                  pokemon.sprites.front_default,
-                id: pokemon.id,
-                types: pokemon.types,
-                abilities: pokemon.abilities,
-                weight: pokemon.weight,
-                height: pokemon.height,
+                  details.sprites.other['official-artwork']?.front_default ||
+                  details.sprites.front_default ||
+                  'https://placehold.co/150x150/cccccc/ffffff?text=No+Image',
+                id: details.id,
+                types: details.types,
+                abilities: details.abilities,
+                weight: details.weight,
+                height: details.height,
               } as PokemonDisplay)
           ),
           catchError((err) => {
@@ -314,7 +316,6 @@ export class PokemonListComponent implements OnInit {
         )
         .subscribe({
           next: (pokemon: PokemonDisplay | null) => {
-
             if (pokemon) {
               this.allLoadedPokemon.set([pokemon]);
             } else {
@@ -334,7 +335,6 @@ export class PokemonListComponent implements OnInit {
     const favs = localStorage.getItem('favorites');
     if (!favs) return [];
     try {
-
       return JSON.parse(favs).map((fav: any) =>
         typeof fav.id === 'number' ? fav.id : 0
       );
@@ -345,8 +345,7 @@ export class PokemonListComponent implements OnInit {
   }
 
   getPokemonNameFromId(id: number): string | undefined {
-    const pokemon = this.allLoadedPokemon().find((p) => p.id === id);
-    return pokemon ? pokemon.name : `ID: ${id}`;
+    return this.pokeService.getPokemonNameById(id);
   }
 
   showFavorites(): void {
@@ -374,7 +373,8 @@ export class PokemonListComponent implements OnInit {
                 url: details.url,
                 imageUrl:
                   details.sprites.other['official-artwork']?.front_default ||
-                  details.sprites.front_default,
+                  details.sprites.front_default ||
+                  'https://placehold.co/150x150/cccccc/ffffff?text=No+Image',
                 id: details.id,
                 types: details.types,
                 abilities: details.abilities,
@@ -457,5 +457,49 @@ export class PokemonListComponent implements OnInit {
     this.selectedPokemonForModal.set(null);
 
     document.body.style.overflow = '';
+  }
+
+  openFavoritePokemonDetails(pokemonId: number): void {
+    this.isLoading.set(true);
+    this.pokeService
+      .getPokemonDetailsById(pokemonId)
+      .pipe(
+        map((details) => {
+          const imageUrl =
+            details.sprites.other['official-artwork']?.front_default ||
+            details.sprites.front_default ||
+            'https://placehold.co/150x150/cccccc/ffffff?text=No+Image';
+          return {
+            name: details.name,
+            url: details.url,
+            imageUrl: imageUrl,
+            id: details.id,
+            types: details.types,
+            abilities: details.abilities,
+            weight: details.weight,
+            height: details.height,
+          } as PokemonDisplay;
+        }),
+        catchError((err) => {
+          console.error(
+            `Failed to load details for favorite Pokémon ID ${pokemonId}:`,
+            err
+          );
+          this.isLoading.set(false);
+          return of(null);
+        }),
+        finalize(() => {
+          this.isLoading.set(false);
+        })
+      )
+      .subscribe((pokemon) => {
+        if (pokemon) {
+          this.openPokemonModal(pokemon);
+        } else {
+          console.warn(
+            'Could not open modal for favorite Pokémon. Details not found.'
+          );
+        }
+      });
   }
 }

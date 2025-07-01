@@ -28,7 +28,8 @@
 
   <div class="pokemon-grid" #pokemonGridContainer>
     <div *ngFor="let pokemon of displayedPokemonList()" class="pokemon-card"
-      (click)="openPokemonModal(pokemon); $event.stopPropagation();" [style.--card-color]="getCardBackgroundColor(pokemon)">
+      (click)="openPokemonModal(pokemon); $event.stopPropagation();"
+      [style.--card-color]="getCardBackgroundColor(pokemon)">
       <img [src]="pokemon.imageUrl || 'assets/placeholder.png'" [alt]="pokemon.name" class="pokemon-image"
         loading="lazy" onerror="this.onerror=null;this.src='assets/placeholder.png';" />
       <div class="pokemon-details">
@@ -54,7 +55,7 @@
     </button>
   </div>
 
-  <div >
+  <div>
     <div class="pagination-controls"
       *ngIf="!isLoading() && !isShowingFavorites() && !searchQuery.trim() && getPaginationPages().length > 1">
       <button (click)="goToPage(1)" [disabled]="currentViewPage() === 1">First</button>
@@ -78,8 +79,9 @@
     <h2>Your Favorite Pokemons</h2>
     <ul class="favorites-list" *ngIf="getFavs().length > 0">
       <li *ngFor="let favId of getFavs()">
-        <a [routerLink]="getRouterLink(getPokemonNameFromId(favId) || '')">{{ getPokemonNameFromId(favId) | titlecase
-          }}</a>
+        <a (click)="openFavoritePokemonDetails(favId)" class="favorite-pokemon-link">
+          {{ getPokemonNameFromId(favId) | titlecase }}
+        </a>
       </li>
     </ul>
     <div *ngIf="getFavs().length === 0 && !isLoading()" class="no-results no-favorites">
