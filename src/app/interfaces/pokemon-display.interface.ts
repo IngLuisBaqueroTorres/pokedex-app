@@ -2,7 +2,7 @@ export interface PokemonDisplay {
   name: string;
   url: string;
   imageUrl: string | null;
-  id?: number;
+  id: number;
   types?: { slot: number; type: { name: string; url: string } }[];
   abilities?: {
     ability: { name: string; url: string };

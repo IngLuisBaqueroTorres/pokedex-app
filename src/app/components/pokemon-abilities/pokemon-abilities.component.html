@@ -1,8 +1,7 @@
-<h3>Habilidades</h3>
 <ul *ngIf="pokemon.abilities && pokemon.abilities.length > 0">
   <li *ngFor="let ability of pokemon.abilities">
     {{ ability.ability.name | titlecase }}
     <span *ngIf="ability.is_hidden">(Oculta)</span>
   </li>
 </ul>
-<p *ngIf="!pokemon.abilities || pokemon.abilities.length === 0">No hay habilidades disponibles.</p>
+<p *ngIf="!pokemon.abilities || pokemon.abilities.length === 0">There is not abilities available.</p>

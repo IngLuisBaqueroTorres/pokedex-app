@@ -101,26 +101,38 @@ export class PokemonListComponent implements OnInit {
 
   private getPokemonDetailsWithImage(pokemon: any): Observable<PokemonDisplay> {
     return this.pokeService.getPokemonDetails(pokemon.name).pipe(
-      map((details) => ({
-        name: details.name,
-        url: details.url,
-        imageUrl:
-          details.sprites.other['official-artwork'].front_default ||
-          details.sprites.front_default,
-        id: details.id,
-        types: details.types,
-        abilities: details.abilities,
-        weight: details.weight,
-        height: details.height,
-      })),
+      map((details) => {
+
+
+        return {
+          name: details.name,
+          url: details.url,
+          imageUrl:
+            details.sprites.other['official-artwork']?.front_default ||
+            details.sprites.front_default,
+          id: details.id,
+          types: details.types,
+          abilities: details.abilities,
+          weight: details.weight,
+          height: details.height,
+        } as PokemonDisplay;
+      }),
       catchError((err) => {
         console.warn(`Failed to load details for ${pokemon.name}:`, err);
+        const extractedId = this.extractIdFromUrl(pokemon.url);
+
+        const idToUse = extractedId !== undefined ? extractedId : 0;
+
         return of({
           name: pokemon.name,
           url: pokemon.url,
           imageUrl: null,
-          id: this.extractIdFromUrl(pokemon.url),
-        });
+          id: idToUse,
+          types: [],
+          abilities: [],
+          weight: 0,
+          height: 0,
+        } as PokemonDisplay);
       })
     );
   }
@@ -282,7 +294,7 @@ export class PokemonListComponent implements OnInit {
                 name: pokemon.name,
                 url: pokemon.url,
                 imageUrl:
-                  pokemon.sprites.other['official-artwork'].front_default ||
+                  pokemon.sprites.other['official-artwork']?.front_default ||
                   pokemon.sprites.front_default,
                 id: pokemon.id,
                 types: pokemon.types,
@@ -301,14 +313,17 @@ export class PokemonListComponent implements OnInit {
           })
         )
         .subscribe({
-          next: (pokemon) => {
+          next: (pokemon: PokemonDisplay | null) => {
+
             if (pokemon) {
               this.allLoadedPokemon.set([pokemon]);
             } else {
               this.allLoadedPokemon.set([]);
             }
           },
-          error: (err) => {},
+          error: (err) => {
+
+          },
         });
     } else {
       this.loadPokemon();
@@ -319,7 +334,10 @@ export class PokemonListComponent implements OnInit {
     const favs = localStorage.getItem('favorites');
     if (!favs) return [];
     try {
-      return JSON.parse(favs).map((fav: any) => fav.id);
+
+      return JSON.parse(favs).map((fav: any) =>
+        typeof fav.id === 'number' ? fav.id : 0
+      );
     } catch (e) {
       console.error('Error parsing favs from localStorage', e);
       return [];
@@ -355,7 +373,7 @@ export class PokemonListComponent implements OnInit {
                 name: details.name,
                 url: details.url,
                 imageUrl:
-                  details.sprites.other['official-artwork'].front_default ||
+                  details.sprites.other['official-artwork']?.front_default ||
                   details.sprites.front_default,
                 id: details.id,
                 types: details.types,

@@ -1,24 +1,171 @@
-.main-pokemon-image{
-  width: 50%;
-  display: block;
-  margin: auto;
+
+.pokemon-detail-page-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  max-width: 700px;
 }
 
-.container{
-  margin: 20px;
+
+.pokemon-detail-header {
+  width: 40%;
+  flex-shrink: 0;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  position: relative;
+  background-color: var(--card-color, #ccc);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
-.container h1{
+.main-pokemon-image {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 2.5em;
+  margin: 0;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pokemon-detail-types-display {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.pokemon-type-tag {
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-weight: bold;
+  font-size: 0.9em;
+  color: white;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.detail-line-separator {
+  /* Este separador probablemente no se usará en un diseño de dos columnas
+     si está entre el header y el body. Si se quiere un separador vertical,
+     se haría de otra forma o se eliminaría. */
+  display: none;
+}
+
+
+.pokemon-detail-body {
+  width: 60%;
+  flex-grow: 1;
+  padding: 0 20px;
   text-align: center;
 }
-p {
-  margin: 8px 0;
-  font-size: 1em;
-  color: #444;
-}
-strong {
-  color: #555;
-  min-width: 60px;
-  display: inline-block;
+
+.pokemon-detail-body h3 {
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 1.5em;
 }
 
+.pokemon-detail-body p {
+  margin: 5px 0;
+  font-size: 1.1em;
+  color: #555;
+}
+
+.abilities-line-separator {
+  width: 60%;
+  height: 1px;
+  background-color: #eee;
+  margin: 20px auto;
+}
+
+
+.action-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  width: auto;
+  min-width: 180px;
+}
+
+.action-button:hover {
+  background-color: #45a049;
+}
+
+
+.favorite-bottom-button.is-favorite {
+  background-color: #f44336;
+}
+
+.favorite-bottom-button.is-favorite:hover {
+  background-color: #d32f2f;
+}
+
+.loading-spinner, .no-pokemon-found {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2em;
+  color: #777;
+}
+.pokemon-abilities-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
+
+@media (max-width: 768px) {
+  .pokemon-detail-header {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .pokemon-detail-page-container {
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 15px 15px;
+    max-width: 95%;
+  }
+  .pokemon-detail-header, .pokemon-detail-body {
+    width: 100%;
+    padding: 0 15px 15px;
+  }
+  .main-pokemon-image {
+    width: 120px;
+    height: 120px;
+  }
+  h1 {
+    font-size: 1.8em;
+  }
+  .action-button {
+    font-size: 0.9em;
+    padding: 6px 12px;
+  }
+  .detail-line-separator {
+    display: block;
+    width: 80%;
+    margin: 15px auto;
+  }
+}

@@ -1,8 +1,41 @@
-<div *ngIf="pokemon" class="container">
-  <h1>{{ pokemon.name | titlecase }}</h1>
-  <img [src]="pokemon.imageUrl || 'assets/placeholder.png'" alt="{{ pokemon.name }}" class="main-pokemon-image" />
-  <p>Height: {{ pokemon.height }}</p>
-  <p>Weight: {{ pokemon.weight }}</p>
-  <app-pokemon-abilities [pokemon]="pokemon"></app-pokemon-abilities>
-  <button (click)="addFavorite()">Add to Favorites</button>
+<div *ngIf="isLoading" class="loading-spinner">
+  Cargando detalles del Pokémon...
+</div>
+
+<div *ngIf="!isLoading && pokemon" class="pokemon-detail-page-container">
+  <div class="pokemon-detail-header" [style.--card-color]="getCardBackgroundColor()">
+    <h1>{{ pokemon.name | titlecase }} #{{ pokemon.id }}</h1>
+    <img [src]="pokemon.imageUrl || 'assets/placeholder.png'" alt="{{ pokemon.name }}" class="main-pokemon-image" />
+    <div class="pokemon-detail-types-display">
+      <span *ngFor="let typeSlot of pokemon.types" class="pokemon-type-tag">
+        {{ typeSlot.type.name | titlecase }}
+      </span>
+    </div>
+  </div>
+
+  <div class="pokemon-detail-body">
+    <p><strong>Hight:</strong> {{ pokemon.height ? (pokemon.height / 10 | number:'1.1-1') + ' m' : 'N/A' }}</p>
+    <p><strong>Weight:</strong> {{ pokemon.weight ? (pokemon.weight / 10 | number:'1.1-1') + ' kg' : 'N/A' }}</p>
+
+    <div class="abilities-line-separator"></div>
+
+    <h3>Abilities</h3>
+    <div class="pokemon-abilities-container">
+      <app-pokemon-abilities [pokemon]="pokemon"></app-pokemon-abilities>
+    </div>
+    <h3>Favorite</h3>
+    <button class="action-button favorite-bottom-button" (click)="toggleFavorite()"
+      [class.is-favorite]="(isPokemonFavorite$ | async)">
+      <ng-container *ngIf="(isPokemonFavorite$ | async); else notFavorite">
+        ❤️ Remove
+      </ng-container>
+      <ng-template #notFavorite>
+        🤍 Add
+      </ng-template>
+    </button>
+  </div>
+</div>
+
+<div *ngIf="!isLoading && !pokemon" class="no-pokemon-found">
+  No Pokémon found.
 </div>

@@ -1,65 +1,95 @@
+
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs'; // 'of' is not strictly needed here if you don't use it, but can stay.
-import { catchError } from 'rxjs/operators'; // 'catchError' is not strictly needed here if you don't use it, but can stay.
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { PokemonDisplay } from '../interfaces/pokemon-display.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PokeService {
   private apiUrl = 'https://pokeapi.co/api/v2/pokemon';
+  private POKEMON_FAVORITES_KEY = 'favorites';
 
   http = inject(HttpClient);
 
-  // Fetches a list of Pokémon with pagination
+  private favoritesSubject = new BehaviorSubject<PokemonDisplay[]>(
+    this.loadFavoritesFromLocalStorage()
+  );
+  public favorites$ = this.favoritesSubject.asObservable();
+
+  private pokemonIdToNameMap = new Map<number, string>();
+
+  constructor() {
+    this.favoritesSubject.getValue().forEach((fav) => {
+      this.pokemonIdToNameMap.set(fav.id, fav.name);
+    });
+  }
+
   getPokemonList(offset = 0, limit = 20): Observable<any> {
     return this.http.get(this.apiUrl + '?offset=' + offset + '&limit=' + limit);
   }
 
-  // Fetches details for a single Pokémon by its name
   getPokemonDetails(name: string): Observable<any> {
-    return this.http.get(this.apiUrl + '/' + name);
+    return this.http.get(this.apiUrl + '/' + name).pipe(
+      tap((details: any) => {
+        this.pokemonIdToNameMap.set(details.id, details.name);
+      })
+    );
   }
 
-  // **NEW METHOD: Fetches details for a single Pokémon by its ID**
-  // This is the method that was missing and caused the error in your component.
   getPokemonDetailsById(id: number): Observable<any> {
-    return this.http.get(this.apiUrl + '/' + id);
+    return this.http.get(this.apiUrl + '/' + id).pipe(
+      tap((details: any) => {
+        this.pokemonIdToNameMap.set(details.id, details.name);
+      })
+    );
   }
 
-  // Saves a Pokémon to local storage favorites
-  saveFavorite(pokemon: any): void {
-    let favs = localStorage.getItem('favorites');
-    let favorites: any[] = JSON.parse(favs || '[]');
+  private loadFavoritesFromLocalStorage(): PokemonDisplay[] {
+    const favs = localStorage.getItem(this.POKEMON_FAVORITES_KEY);
+    return favs ? JSON.parse(favs) : [];
+  }
 
-    // Prevents adding the same Pokémon multiple times to favorites
-    const exists = favorites.some((fav) => fav.id === pokemon.id);
-    if (!exists) {
-      favorites.push(pokemon);
-      localStorage.setItem('favorites', JSON.stringify(favorites));
+  private saveFavoritesToLocalStorage(favs: PokemonDisplay[]): void {
+    localStorage.setItem(this.POKEMON_FAVORITES_KEY, JSON.stringify(favs));
+  }
+
+  toggleFavorite(pokemon: PokemonDisplay): void {
+    const currentFavs = this.favoritesSubject.getValue();
+    const isCurrentlyFavorite = currentFavs.some(
+      (fav) => fav.id === pokemon.id
+    );
+
+    let updatedFavs: PokemonDisplay[];
+
+    if (isCurrentlyFavorite) {
+      updatedFavs = currentFavs.filter((fav) => fav.id !== pokemon.id);
+      console.log(`Removed ${pokemon.name} from favorites.`);
     } else {
-      console.log(`Pokémon ${pokemon.name} is already in favorites.`);
+      updatedFavs = [...currentFavs, pokemon];
+
+      this.pokemonIdToNameMap.set(pokemon.id, pokemon.name);
+      console.log(`Added ${pokemon.name} to favorites.`);
     }
+
+    this.favoritesSubject.next(updatedFavs);
+    this.saveFavoritesToLocalStorage(updatedFavs);
   }
 
-  // **NEW METHOD: Retrieves all favorite Pokémon from local storage**
-  getFavorites(): any[] {
-    const favs = localStorage.getItem('favorites');
-    return JSON.parse(favs || '[]');
+  isFavorite(pokemonId: number): Observable<boolean> {
+    return this.favorites$.pipe(
+      map((favs) => favs.some((fav) => fav.id === pokemonId))
+    );
   }
 
-  // **NEW METHOD: Removes a Pokémon from favorites by its ID**
-  removeFavorite(pokemonId: number): void {
-    let favs = localStorage.getItem('favorites');
-    let favorites: any[] = JSON.parse(favs || '[]');
-    const updatedFavorites = favorites.filter((fav) => fav.id !== pokemonId);
-    localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+  getFavorites(): PokemonDisplay[] {
+    return this.favoritesSubject.getValue();
   }
 
-  // **NEW METHOD: Checks if a Pokémon is currently a favorite**
-  isFavorite(pokemonId: number): boolean {
-    const favs = localStorage.getItem('favorites');
-    const favorites: any[] = JSON.parse(favs || '[]');
-    return favorites.some((fav) => fav.id === pokemonId);
+  getPokemonNameById(id: number): string | undefined {
+    return this.pokemonIdToNameMap.get(id);
   }
 }

@@ -3,26 +3,15 @@
     <button class="close-button" (click)="onClose()">X</button>
 
     <ng-container *ngIf="pokemon">
-      <div class="modal-header" [style.--card-color]="getCardBackgroundColor(pokemon)">
-        <h2>{{ pokemon.name | titlecase }} #{{ pokemon.id }}</h2>
-        <img [src]="pokemon.imageUrl || 'assets/placeholder.png'" [alt]="pokemon.name" class="modal-pokemon-image" />
-        <div class="modal-pokemon-types">
-          <span *ngFor="let typeSlot of pokemon.types" class="pokemon-type-tag">
-            {{ typeSlot.type.name | titlecase }}
-          </span>
-        </div>
-      </div>
 
       <div class="modal-body">
         <app-pokemon-detail [pokemon]="pokemon"></app-pokemon-detail>
-
-        <app-pokemon-abilities [pokemon]="pokemon"></app-pokemon-abilities>
 
       </div>
     </ng-container>
 
     <ng-container *ngIf="!pokemon">
-      <div class="loading-message">Cargando detalles...</div>
+      <div class="loading-message">Loading Details...</div>
     </ng-container>
   </div>
 </div>

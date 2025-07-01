@@ -54,7 +54,7 @@
     </button>
   </div>
 
-  <div class="pagination-section">
+  <div >
     <div class="pagination-controls"
       *ngIf="!isLoading() && !isShowingFavorites() && !searchQuery.trim() && getPaginationPages().length > 1">
       <button (click)="goToPage(1)" [disabled]="currentViewPage() === 1">First</button>
